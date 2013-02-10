@@ -1152,7 +1152,7 @@ decrypt_pki_encrypted_session_key(struct ecryptfs_auth_tok *auth_tok,
 	struct ecryptfs_message *msg = NULL;
 	char *auth_tok_sig;
 	char *payload;
-	size_t payload_len;
+	size_t payload_len = 0;
 	int rc;
 
 	rc = ecryptfs_get_auth_tok_sig(&auth_tok_sig, auth_tok);
@@ -1973,7 +1973,7 @@ pki_encrypt_session_key(struct key *auth_tok_key,
 {
 	struct ecryptfs_msg_ctx *msg_ctx = NULL;
 	char *payload = NULL;
-	size_t payload_len;
+	size_t payload_len = 0;
 	struct ecryptfs_message *msg;
 	int rc;
 

@@ -2756,7 +2756,7 @@ static int ax88772_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
 
 static struct sk_buff *ax88772_tx_fixup(struct usbnet *dev, struct sk_buff *skb, gfp_t flags)
 {
-	int padlen = ((skb->len + 4) % 512) ? 0 : 4;
+	int padlen = ((skb->len + 4) & (dev->maxpacket - 1)) ? 0 : 4;
 	u32 packet_len;
 	u32 padbytes = 0xffff0000;
 
@@ -2794,7 +2794,7 @@ static struct sk_buff *ax88772_tx_fixup(struct usbnet *dev, struct sk_buff *skb,
 	skb_copy_to_linear_data(skb, &packet_len, sizeof(packet_len));
 #endif
 
-	if ((skb->len % 512) == 0) {
+	if (padlen) {
 		cpu_to_le32s(&padbytes);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
 		memcpy(skb->tail, &padbytes, sizeof(padbytes));
@@ -2899,7 +2899,7 @@ static int ax88772b_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
 static struct sk_buff *
 ax88772b_tx_fixup(struct usbnet *dev, struct sk_buff *skb, gfp_t flags)
 {
-	int padlen = ((skb->len + 4) % 512) ? 0 : 4;
+	int padlen = ((skb->len + 4) & (dev->maxpacket - 1)) ? 0 : 4;
 	u32 packet_len;
 	u32 padbytes = 0xffff0000;
 
@@ -3414,6 +3414,10 @@ static const struct usb_device_id	products [] = {
 	/* DLink DUB-E100B */
 	USB_DEVICE (0x2001, 0x3c05),
 	.driver_info =  (unsigned long) &dlink_dub_e100b_info,
+}, {
+       // DLink DUB-E100 H/W Ver C1
+       USB_DEVICE (0x2001, 0x1a02),
+       .driver_info = (unsigned long) &ax88772_info,
 }, {
 	/* DLink DUB-E100B */
 	USB_DEVICE (0x07d1, 0x3c05),

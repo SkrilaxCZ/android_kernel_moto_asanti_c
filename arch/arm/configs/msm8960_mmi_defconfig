@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Linux/arm 3.0.64 Kernel Configuration
+# Linux/arm 3.0.65 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -388,6 +388,7 @@ CONFIG_MSM_PIL=y
 # CONFIG_MSM_PIL_QDSP6V3 is not set
 CONFIG_MSM_PIL_QDSP6V4=y
 CONFIG_MSM_PIL_RIVA=y
+CONFIG_MSM_INSECURE_PIL_RIVA=y
 CONFIG_MSM_PIL_TZAPPS=y
 CONFIG_MSM_PIL_VIDC=y
 CONFIG_MSM_SCM=y

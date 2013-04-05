@@ -345,7 +345,6 @@ static int find_group_flex(struct super_block *sb, struct inode *parent,
 	ext4_group_t ngroups = ext4_get_groups_count(sb);
 	int flex_size = ext4_flex_bg_size(sbi);
 	ext4_group_t best_flex = parent_fbg_group;
-	ext4_fsblk_t blocks_per_flex = sbi->s_blocks_per_group * flex_size;
 	ext4_fsblk_t flexbg_free_blocks;
 	int flex_freeb_ratio;
 	ext4_group_t n_fbg_groups;
@@ -355,8 +354,8 @@ static int find_group_flex(struct super_block *sb, struct inode *parent,
 		sbi->s_log_groups_per_flex;
 
 find_close_to_parent:
-	flexbg_free_blocks = atomic64_read(&flex_group[best_flex].free_blocks);
-	flex_freeb_ratio = flexbg_free_blocks * 100 / blocks_per_flex;
+	flexbg_free_blocks = (atomic64_read(&flex_group[best_flex].free_blocks) * 100) >> sbi->s_log_groups_per_flex;
+	flex_freeb_ratio = do_div(flexbg_free_blocks, sbi->s_blocks_per_group);
 	if (atomic_read(&flex_group[best_flex].free_inodes) &&
 	    flex_freeb_ratio > free_block_ratio)
 		goto found_flexbg;
@@ -370,8 +369,8 @@ find_close_to_parent:
 		if (i == parent_fbg_group || i == parent_fbg_group - 1)
 			continue;
 
-		flexbg_free_blocks = atomic64_read(&flex_group[i].free_blocks);
-		flex_freeb_ratio = flexbg_free_blocks * 100 / blocks_per_flex;
+		flexbg_free_blocks = (atomic64_read(&flex_group[i].free_blocks) * 100) >> sbi->s_log_groups_per_flex;
+		flex_freeb_ratio = do_div(flexbg_free_blocks, sbi->s_blocks_per_group);
 
 		if (flex_freeb_ratio > free_block_ratio &&
 		    (atomic_read(&flex_group[i].free_inodes))) {
